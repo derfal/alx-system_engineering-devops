@@ -1,21 +1,32 @@
 #!/usr/bin/env bash
-# Configures HAProxy as a load balancer for rb4.com
+# Create a script to install and configure HAProxy on lb-01 server
+# Configure HAProxy to send traffic to web-01 and web-02 servers
+# Distribute requests using a roundrobin algorithm
+# Make sure that HAProxy can be managed via an init script
 
-# Install HAProxy on the load balancer
-apt-get -y update
+# Install and configure HAproxy on my lb-01 server.
+sudo apt-get -y update
 apt-get -y install haproxy
 
-# Configure HAProxy configuration file to distribute requests using a roundrobin algorithm
-echo '
-frontend shl92_frontend
-        bind 0.0.0.0:80
-        default_backend shl92_backend
-
+# edit config file
+server_config=\
+"
+frontend  shl92_frontend
+        bind *:80
+        mode http
+        default_backend besthor_backend
 backend shl92_backend
         balance roundrobin
-        server 451968-web-01 100.25.144.97:80 check
-        server 451968-web-02 52.86.103.75 check
-' > /etc/haproxy/haproxy.cfg
+        server 176572-web-01 100.25.144.97:80 check
+        server 176572-web-02 52.86.103.75:80 check
+"
+echo "$server_config" | sudo tee -a /etc/haproxy/haproxy.cfg
 
-# Restart HAProxy service
-service haproxy restart
+# enable haproxy to be started by init script
+echo "ENABLED=1" | sudo tee -a /etc/default/haproxy
+
+# Testing the HAproxy configuration file
+sudo haproxy -c -f /etc/haproxy/haproxy.cfg
+
+# Restart the Nginx service
+sudo service haproxy restart
