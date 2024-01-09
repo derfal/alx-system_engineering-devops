@@ -14,7 +14,7 @@ frontend shl92_frontend
 backend shl92_backend
         balance roundrobin
         server 451968-web-01 100.25.144.97:80 check
-        server 451968-web-02 154.236.233.31:80 check
+        server 451968-web-02 54.236.233.31 check
 ' > /etc/haproxy/haproxy.cfg
 
 # Restart HAProxy service
