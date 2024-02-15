@@ -38,7 +38,7 @@ defaults
 	errorfile 504 /etc/haproxy/errors/504.http
 
 listen shl92
-	bind 0.0.0.0:80
+	bind *:80
 	mode http
 	balance roundrobin
 	option http-server-close
@@ -48,12 +48,12 @@ listen shl92
 	server 430957-web-02 52.86.103.75:80 check
 
 frontend www-http
-	bind 0.0.0.0:80
+	bind *:80
 	reqadd x-Forwarded-Proto:\ http
 	default_backend www-backend
 
 frontend www-https
-    	bind 0.0.0.0:443 ssl crt  /etc/letsencrypt/live/www.shl92.tech/fullchain.pem
+	bind *:443 ssl crt /etc/letsencrypt/live/www.shl92.tech/fullchain.pem	
 	reqadd X-Forwarded-Proto:\ https
 	acl letsencrypt-acl path_beg /.well-known/acme-challenge/
 	use_backend letsencrypt-backend if letsencrypt-acl
